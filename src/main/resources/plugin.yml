@@ -1,0 +1,7 @@
+name: PAF-WebAuth
+version: ${project.version}
+author: Simonsator
+depends: [PartyAndFriends]
+depend: [PartyAndFriends]
+main: de.simonsator.partyandfriends.extensions.webauth.WAPlugin
+description: Adds the command /friends auth
