@@ -26,8 +26,10 @@ public class AuthSubCommand extends FriendSubCommand {
 			return;
 		}
 		if (args.length == 1) {
-			TextComponent text = new TextComponent(PREFIX + CONFIGURATION.getString("Messages.NoAuthKey"));
-			text.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, CONFIGURATION.getString("AuthWebsite")));
+			TextComponent text = new TextComponent(TextComponent.fromLegacyText(PREFIX +
+					CONFIGURATION.getString("Messages.NoAuthKey")));
+			text.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
+					CONFIGURATION.getString("AuthWebsite")));
 			sendError(pPlayer, text);
 			return;
 		}
@@ -35,6 +37,7 @@ public class AuthSubCommand extends FriendSubCommand {
 			pPlayer.sendMessage(PREFIX + CONFIGURATION.getString("Messages.Authenticated"));
 			return;
 		}
-		sendError(pPlayer, new TextComponent(PREFIX + CONFIGURATION.getString("Messages.AuthKeyWrong")));
+		sendError(pPlayer, new TextComponent(
+				TextComponent.fromLegacyText(PREFIX + CONFIGURATION.getString("Messages.AuthKeyWrong"))));
 	}
 }

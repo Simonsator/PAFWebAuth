@@ -1,16 +1,15 @@
 package de.simonsator.partyandfriends.extensions.webauth.connection;
 
-import de.simonsator.partyandfriends.communication.sql.MySQLData;
-import de.simonsator.partyandfriends.communication.sql.SQLCommunication;
+import de.simonsator.partyandfriends.communication.sql.pool.PoolSQLCommunication;
 
 import java.sql.*;
 
-public class WAMySQL extends SQLCommunication {
+public class WAMySQL extends PoolSQLCommunication {
 	private final String TABLE_PREFIX;
 
-	public WAMySQL(MySQLData pData) {
-		super(pData);
-		this.TABLE_PREFIX = pData.TABLE_PREFIX;
+	public WAMySQL(String pTablePrefix) {
+		super();
+		this.TABLE_PREFIX = pTablePrefix;
 		importDB();
 	}
 
@@ -18,12 +17,15 @@ public class WAMySQL extends SQLCommunication {
 		Connection con = getConnection();
 		PreparedStatement prepStmt = null;
 		try {
-			prepStmt = con.prepareStatement("CREATE TABLE IF NOT EXISTS `" + TABLE_PREFIX + "authenticated` (`player_id` INT(8) NOT NULL,\n" + "`web_id` INT(8) NOT NULL,\n"
-					+ " FOREIGN KEY (player_id) REFERENCES " + TABLE_PREFIX + "players(player_id))");
+			prepStmt = con.prepareStatement("CREATE TABLE IF NOT EXISTS `" +
+					TABLE_PREFIX + "authenticated` (`player_id` INT(8) NOT NULL, `web_id` INT(8) NOT NULL, FOREIGN KEY (player_id) REFERENCES "
+					+ TABLE_PREFIX + "players(player_id))");
 			prepStmt.executeUpdate();
 			prepStmt.close();
-			prepStmt = con.prepareStatement("CREATE TABLE IF NOT EXISTS `" + TABLE_PREFIX + "auth_waiting_for_verification` (`player_id` INT(8) NOT NULL,\n" + "`web_id` INT(8) NOT NULL, `auth_key` CHAR(38) NOT NULL, \n"
-					+ " FOREIGN KEY (player_id) REFERENCES " + TABLE_PREFIX + "players(player_id))");
+			prepStmt = con.prepareStatement("CREATE TABLE IF NOT EXISTS `"
+					+ TABLE_PREFIX + "auth_waiting_for_verification` " +
+					"(`player_id` INT(8) NOT NULL, `web_id` INT(8) NOT NULL, `auth_key` CHAR(38) NOT NULL, FOREIGN KEY (player_id) REFERENCES " +
+					TABLE_PREFIX + "players(player_id))");
 			prepStmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -37,7 +39,8 @@ public class WAMySQL extends SQLCommunication {
 		ResultSet rs = null;
 		PreparedStatement prepStmt = null;
 		try {
-			prepStmt = con.prepareStatement("select web_id from `" + TABLE_PREFIX + "auth_waiting_for_verification` WHERE player_id=? AND auth_key=? LIMIT 1");
+			prepStmt = con.prepareStatement("select web_id from `" +
+					TABLE_PREFIX + "auth_waiting_for_verification` WHERE player_id=? AND auth_key=? LIMIT 1");
 			prepStmt.setInt(1, pPlayerID);
 			prepStmt.setString(2, authKey);
 			rs = prepStmt.executeQuery();
